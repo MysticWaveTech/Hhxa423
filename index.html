@@ -69,6 +69,21 @@
             border-left: 5px solid #ff5733;
             border-radius: 5px;
         }
+  
+  #cancel {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: background-color 0.3s;
+    float: right;
+        }
+        #cancel:hover {
+            background-color: #c0392b;
+        }<
+  
     </style>
 </head>
 <body>
@@ -77,7 +92,7 @@
             <h1>Maximworld Web App</h1>
             <p>Express your being, share your exact state!</p>
         </div>
-        <div class="status-update">
+<div class="status-update">
             <input type="text" id="status-input" placeholder="What's on your mind?">
             <button onclick="addStatus()">Post Status</button>
         </div>
@@ -85,17 +100,46 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatuses();
+        });
+
         function addStatus() {
             const statusInput = document.getElementById('status-input');
-            const statusList = document.getElementById('status-list');
-            
-            if (statusInput.value.trim() !== "") {
-                const li = document.createElement('li');
-                li.textContent = statusInput.value;
-                statusList.prepend(li);
+            const status = statusInput.value.trim();
+            if (status !== "") {
+                saveStatus(status);
                 statusInput.value = "";
             }
         }
+
+        function saveStatus(status) {
+            let statuses = JSON.parse(localStorage.getItem('statuses')) || [];
+            statuses.unshift(status);
+            localStorage.setItem('statuses', JSON.stringify(statuses));
+            renderStatuses();
+        }
+
+        function loadStatuses() {
+            renderStatuses();
+        }
+
+        function renderStatuses() {
+            const statusList = document.getElementById('status-list');
+            const statuses = JSON.parse(localStorage.getItem('statuses')) || [];
+            statusList.innerHTML = '';
+            statuses.forEach((status, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `${status} <button id="cancel" onclick="removeStatus(${index})">Cancel</button>`;
+                statusList.appendChild(li);
+            });
+        }
+
+        function removeStatus(index) {
+            let statuses = JSON.parse(localStorage.getItem('statuses')) || [];
+            statuses.splice(index, 1);
+            localStorage.setItem('statuses', JSON.stringify(statuses));
+            renderStatuses();
+        }
     </script>
-</body>
 </html>
